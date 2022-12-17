@@ -912,17 +912,9 @@ if [ ! -f boot-"$deviceid"/ibot.img4 ]; then
         echo "[*] Patching and signing iBSS/iBoot"
         "$dir"/iBoot64Patcher iBSS.dec iBSS.patched
         if [ "$semi_tethered" = "1" ]; then
-            if [ "$serial" = "1" ]; then
-                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "serial=3 rd=$fs" -l -r
-            else
-                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "-v rd=$fs" -l -r
-            fi
+            "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "$boot_args rd=$fs" -l -r
         else
-            if [ "$serial" = "1" ]; then
-                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "serial=3" -f -r
-            else
-                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "-v" -f -r
-            fi
+            "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "$boot_args" -f -r
         fi
         cd ..
         "$dir"/img4 -i work/iBSS.patched -o boot-"$deviceid"/iBSS.img4 -M blobs/"$deviceid"-"$version".der -A -T ibss
