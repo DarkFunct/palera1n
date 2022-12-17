@@ -885,19 +885,12 @@ if [ ! -f boot-"$deviceid"/ibot.img4 ]; then
         "$dir"/gaster decrypt "$(awk "/""$model""/{x=1}x&&/iBoot[.]/{print;exit}" BuildManifest.plist | grep '<string>' | cut -d\> -f2 | cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" ibot.dec
 
         echo "[*] Patching and signing iBoot"
-        "$dir"/iBoot64Patcher ibot.dec ibot.patched
+        "$dir"/iBoot64Patcher ibot.dec ibot.patched -r
 
         if [[ "$deviceid" == iPhone9,[1-4] ]]; then
             "$dir"/iBootpatch2 --t8010 ibot.patched ibot.patched2
         else
             "$dir"/iBootpatch2 --t8015 ibot.patched ibot.patched2
-        fi
-
-        if [ "$os" = 'Linux' ]; then
-            sed -i 's/\/\kernelcache/\/\kernelcachd/g' ibot.patched2
-        else
-            LC_ALL=C sed -i.bak -e 's/s\/\kernelcache/s\/\kernelcachd/g' ibot.patched2
-            rm *.bak
         fi
 
         cd ..
@@ -920,23 +913,16 @@ if [ ! -f boot-"$deviceid"/ibot.img4 ]; then
         "$dir"/iBoot64Patcher iBSS.dec iBSS.patched
         if [ "$semi_tethered" = "1" ]; then
             if [ "$serial" = "1" ]; then
-                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "serial=3 rd=$fs" -l
+                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "serial=3 rd=$fs" -l -r
             else
-                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "-v rd=$fs" -l
+                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "-v rd=$fs" -l -r
             fi
         else
             if [ "$serial" = "1" ]; then
-                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "serial=3" -f
+                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "serial=3" -f -r
             else
-                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "-v" -f
+                "$dir"/iBoot64Patcher ibot.dec ibot.patched -b "-v" -f -r
             fi
-        fi
-
-        if [ "$os" = 'Linux' ]; then
-            sed -i 's/\/\kernelcache/\/\kernelcachd/g' ibot.patched
-        else
-            LC_ALL=C sed -i.bak -e 's/s\/\kernelcache/s\/\kernelcachd/g' ibot.patched
-            rm *.bak
         fi
         cd ..
         "$dir"/img4 -i work/iBSS.patched -o boot-"$deviceid"/iBSS.img4 -M blobs/"$deviceid"-"$version".der -A -T ibss
