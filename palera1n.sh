@@ -565,10 +565,10 @@ if [ ! -f blobs/"$deviceid"-"$version".der ]; then
     
     if [ "$tweaks" = "1" ]; then
         echo "[*] Testing for baseband presence"
-        if [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "true" ] && [ "${cpid}" == *"0x700"* ]; then
+        if [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "true" ] && [[ "${cpid}" == *"0x700"* ]]; then
             disk=7
         elif [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "false" ]; then
-            if [ "${cpid}" == *"0x700"* ]; then
+            if [[ "${cpid}" == *"0x700"* ]]; then
                 disk=6
             else
                 disk=7
@@ -984,4 +984,4 @@ echo "Otherwise, press Do All in the settings section of the app"
 echo "If you have any issues, please join the Discord server and ask for help: https://dsc.gg/palera1n"
 echo "Enjoy!"
 
-} | tee logs/${log}
+} 2>&1 | tee logs/${log}
